@@ -1,0 +1,227 @@
+/* =============================================================
+   KØBENHAVNERBILLEDER – style.css
+   Layout, farver, spacing og tekst laves med Struktur's utility-classes
+   direkte i HTML'en (som Tailwind). Her står KUN det, Struktur ikke har
+   en klasse til. Alle afstande bruger Struktur's 8pt-variabler (--space-*).
+
+   1. Typografi
+   2. Rettelser til Struktur på mørk baggrund
+   3. Hero og løbebånd
+   4. Grid-tilføjelser (billeder der spænder 2 rækker)
+   5. Små detaljer (kapitelnumre, forfatterfoto, footer)
+   6. Animationer: skjul elementer indtil Struktur's js.js animerer dem
+   ============================================================= */
+
+
+/* ========== 1. TYPOGRAFI ========== */
+/* Struktur bruger serif til overskrifter – vi bruger Anton (Google Fonts) */
+body {
+    font-family: "Inter", system-ui, sans-serif;
+}
+
+h1, h2, h3, .text-xl, .text-lg,
+.hero__overskrift, .kapitel__nr, .footer__navn {
+    font-family: "Anton", Impact, sans-serif;
+    font-weight: 400;
+    line-height: 1.1;
+    text-transform: uppercase;
+}
+
+/* Struktur giver også .text-md serif – den bruger vi til brødtekst, så Inter */
+.text-md {
+    font-family: "Inter", system-ui, sans-serif;
+    line-height: 1.4;
+}
+
+/* Bogens titel i hero skal være i Inter, ikke Anton */
+.hero h1 {
+    font-family: "Inter", system-ui, sans-serif;
+    font-weight: var(--font-weight-bold);
+    text-transform: none;
+}
+
+/* Struktur's text-xl er 3rem – på store skærme vil vi have større overskrifter */
+@media (min-width: 960px) {
+    .text-xl { font-size: calc(var(--font-size-xl) * 1.5); }   /* 72px */
+}
+
+
+/* ========== 2. RETTELSER TIL STRUKTUR PÅ MØRK BAGGRUND ========== */
+/* Struktur farver links blå og labels mørke – det kan ikke læses på mørk baggrund */
+a,
+a:hover {
+    color: inherit;
+}
+label {
+    color: inherit;
+}
+input[type="text"],
+input[type="email"] {
+    color: var(--color-bright);
+    border-color: var(--color-bright);
+}
+
+/* Header og mobilmenu er lyse i Struktur – her mørke. z-index så headeren ligger øverst */
+.navbarfixed {
+    background: var(--color-dark);
+    z-index: 100;
+}
+.mobile-menu {
+    background-color: var(--color-dark);
+    font-size: var(--font-size-lg);
+}
+
+/* Struktur giver ALLE <button> blå baggrund – burger-ikonet skal være gennemsigtigt */
+.navicon,
+.navicon:hover {
+    background: none;
+    border: 0;
+    padding: var(--space-xs);
+    color: inherit;
+}
+
+/* Struktur's .btn er inline – inline-block, så lange knapper ikke knækker grimt på mobil */
+.btn {
+    display: inline-block;
+    text-align: center;
+}
+
+/* Logoet i Anton */
+.logo {
+    font-family: "Anton", Impact, sans-serif;
+    font-size: var(--font-size-md);
+    text-transform: uppercase;
+}
+
+/* Tydelig fokusmarkering for tastaturbrugere */
+:focus-visible {
+    outline: var(--border-width-md) solid var(--color-secondary);
+    outline-offset: var(--space-xs);
+}
+
+/* Header'en er fixed, så ankerlinks skal stoppe under den */
+section {
+    scroll-margin-top: var(--space-xxxl);
+}
+
+
+/* ========== 3. HERO OG LØBEBÅND ========== */
+.hero__overskrift {
+    font-size: clamp(3rem, 9vw, 8rem);   /* flydende størrelse: 48px → 128px */
+    line-height: 0.95;
+}
+
+/* Løbebåndet: teksten står to gange og flyttes -50 % i en løkke */
+.marquee {
+    overflow: hidden;
+    padding: var(--space-md) 0;
+}
+.marquee__tekst {
+    width: max-content;
+    margin: 0;
+    font-family: "Anton", Impact, sans-serif;
+    font-size: var(--font-size-md);
+    text-transform: uppercase;
+    white-space: nowrap;
+    animation: marquee 30s linear infinite;
+}
+@keyframes marquee {
+    to { transform: translateX(-50%); }
+}
+
+
+/* ========== 4. GRID-TILFØJELSER ==========
+   Struktur har klasser til kolonner (col-*), men ikke til RÆKKER.
+   Derfor tilføjer vi selv "span 2 rækker" her. */
+
+/* Billeder af bogen: forsiden spænder 2 rækker, så opslagene ligger ved siden af */
+@media (min-width: 760px) {
+    .billeder {
+        grid-auto-rows: 256px;      /* 32 × 8px – faste rækker, så billederne fylder dem */
+    }
+    .billeder__forside {
+        grid-row: span 2;
+    }
+}
+
+/* Galleri: faste rækkehøjder, så "span 2" giver præcis dobbelt højde.
+   grid-auto-flow: dense lader små billeder fylde hullerne. */
+.galleri {
+    grid-auto-rows: 192px;          /* 24 × 8px */
+    grid-auto-flow: dense;
+}
+.galleri__hoej {
+    grid-row: span 2;
+}
+
+/* Alle billeder fylder deres grid-celle uden at blive forvrænget */
+.billeder img,
+.galleri img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.galleri__billede {
+    display: block;
+    overflow: hidden;
+    border-radius: var(--radius-sm);
+}
+.galleri img {
+    transition: transform 0.5s ease;
+}
+.galleri__billede:hover img {
+    transform: scale(1.05);
+}
+
+
+/* ========== 5. SMÅ DETALJER ========== */
+.kapitel__nr {
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--space-sm);
+}
+
+/* Forfatterfotoet er sort/hvidt og får farve ved hover */
+.forfatter__foto {
+    filter: grayscale(1);
+    transition: filter 0.5s ease;
+}
+.forfatter__foto:hover {
+    filter: grayscale(0);
+}
+
+.rabatkode {
+    padding: var(--space-xs) var(--space-sm);
+    border: var(--border-width-sm) dashed currentColor;
+    font-weight: var(--font-weight-bold);
+}
+
+.footer {
+    border-top: var(--border-width-sm) solid rgb(255 255 255 / 0.2);
+}
+.footer__navn {
+    font-size: clamp(3rem, 12vw, 11rem);
+    margin: var(--space-xl) 0 var(--space-md);
+}
+
+
+/* ========== 6. ANIMATIONER ==========
+   Struktur's js.js tilføjer klassen fra data-animation="…", når elementet
+   kommer ind på skærmen. Indtil da skjuler vi det – men KUN når JavaScript
+   kører (klassen .js sættes i <head>), så siden kan læses uden JS. */
+.js [data-animation] {
+    opacity: 0;
+}
+
+/* Brugere der har bedt om mindre bevægelse: ingen animationer */
+@media (prefers-reduced-motion: reduce) {
+    .js [data-animation] {
+        opacity: 1;
+        animation: none !important;
+    }
+    .marquee__tekst {
+        animation: none;
+    }
+    html {
+        scroll-behavior: auto;
+    }
+}
